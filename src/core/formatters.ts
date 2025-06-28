@@ -1,11 +1,11 @@
 import Table from 'cli-table3';
-import { KvEntry, OutputFormat } from '../types/cli-types.js';
+import { KvEntry, OutputFormat, ListOptions } from '../types/cli-types.js';
 
-export function formatOutput(data: KvEntry[], format: OutputFormat): string {
+export function formatOutput(data: KvEntry[], format: OutputFormat, options?: Pick<ListOptions, 'keyMultiline' | 'prettyJson'>): string {
   if (format === 'json') {
     return JSON.stringify(data, null, 2);
   }
-  return formatAsTable(data);
+  return formatAsTable(data, options);
 }
 
 export function formatSingleEntry(entry: KvEntry | null, format: OutputFormat): string {
@@ -18,7 +18,7 @@ export function formatSingleEntry(entry: KvEntry | null, format: OutputFormat): 
   return formatAsTable([entry]);
 }
 
-function formatAsTable(entries: KvEntry[]): string {
+function formatAsTable(entries: KvEntry[], options?: Pick<ListOptions, 'keyMultiline' | 'prettyJson'>): string {
   if (entries.length === 0) {
     return 'No entries found';
   }
@@ -33,9 +33,19 @@ function formatAsTable(entries: KvEntry[]): string {
   });
 
   entries.forEach(entry => {
+    // Format key based on keyMultiline option
+    const keyDisplay = options?.keyMultiline 
+      ? entry.key.join('\n')
+      : entry.key.join(':');
+
+    // Format value based on prettyJson option
+    const valueDisplay = options?.prettyJson
+      ? JSON.stringify(entry.value, null, 2)
+      : JSON.stringify(entry.value);
+
     table.push([
-      entry.key.join(':'),
-      JSON.stringify(entry.value),
+      keyDisplay,
+      valueDisplay,
       entry.versionstamp
     ]);
   });

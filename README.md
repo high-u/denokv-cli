@@ -44,6 +44,60 @@ You can set the database path using an environment variable:
 export DENO_KV_CLI_DB_PATH=/path/to/your/database.db
 ```
 
+## Getting Started - Complete Example
+
+Here's a step-by-step example demonstrating how to create a user management system with tasks:
+
+```bash
+# Create user 1
+denokv set "users:1" '{"name":"Jane"}' --db-path ./example.db
+
+# Create user 2
+denokv set "users:2" '{"name":"Smith"}' --db-path ./example.db
+
+# Add tasks for user 1
+denokv set "users:1:tasks:1" '{"task":"Complete project documentation","due":"2025-06-30"}' --db-path ./example.db
+denokv set "users:1:tasks:2" '{"task":"Review pull requests","due":"2025-07-03"}' --db-path ./example.db
+
+# Add task for user 2
+denokv set "users:2:tasks:1" '{"task":"Prepare quarterly report","due":"2025-07-15"}' --db-path ./example.db
+
+# List all users
+denokv list --prefix "users" --db-path ./example.db
+
+# List all data in the database
+denokv list --db-path ./example.db
+
+# List tasks for user 1
+denokv list --prefix "users:1:tasks" --db-path ./example.db
+
+# Get specific user
+denokv get "users:1" --db-path ./example.db
+
+# Get multiple users at once
+denokv get-many "users:1" "users:2" --db-path ./example.db
+
+# Get specific task
+denokv get "users:1:tasks:1" --db-path ./example.db
+
+# Get all tasks for user 1
+denokv get-many "users:1:tasks:1" "users:1:tasks:2" --db-path ./example.db
+
+# View as JSON for programmatic processing
+denokv list --format json --db-path ./example.db
+
+# View as table (default) for human reading
+denokv list --format table --db-path ./example.db
+```
+
+This example demonstrates:
+
+- **Hierarchical key structure**: `users:id:tasks:taskId` format
+- **JSON values**: Structured data for users and tasks
+- **Step-by-step data creation**: Users first, then tasks
+- **Various query patterns**: Single retrieval, multiple retrieval, prefix searches
+- **Output formats**: Table display vs JSON output for different use cases
+
 ## Commands
 
 ### 1. list - List KV Records

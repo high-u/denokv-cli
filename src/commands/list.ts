@@ -15,6 +15,8 @@ export function setupListCommand(): Command {
     .option('-r, --reverse', 'Reverse order')
     .option('-l, --limit <limit>', 'Maximum number of results')
     .option('-f, --format <format>', 'Output format (table/json)', getDefaultFormat())
+    .option('--key-multiline', 'Display key array elements on separate lines')
+    .option('--pretty-json', 'Format JSON values with indentation and line breaks')
     .option('--db-path <path>', 'Path to the KV database file')
     .action(async (options) => {
       try {
@@ -28,12 +30,14 @@ export function setupListCommand(): Command {
           start: options.start,
           end: options.end,
           reverse: options.reverse,
-          limit: options.limit ? validateLimit(options.limit) : undefined
+          limit: options.limit ? validateLimit(options.limit) : undefined,
+          keyMultiline: options.keyMultiline,
+          prettyJson: options.prettyJson
         };
 
         const kv = await connectToKv(config.dbPath!);
         const entries = await listEntries(kv, listOptions);
-        const output = formatOutput(entries, format);
+        const output = formatOutput(entries, format, { keyMultiline: listOptions.keyMultiline, prettyJson: listOptions.prettyJson });
         
         console.log(output);
       } catch (error) {

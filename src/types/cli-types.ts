@@ -8,6 +8,8 @@ export interface ListOptions {
   limit?: number;
   format: OutputFormat;
   dbPath?: string;
+  keyMultiline?: boolean;
+  prettyJson?: boolean;
 }
 
 export interface GetOptions {
